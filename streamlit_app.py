@@ -1,5 +1,6 @@
 # Import python packages
 import streamlit as st
+import requests
 
 from snowflake.snowpark.functions import col
 
@@ -22,8 +23,9 @@ cnx=st.connection("snowflake")
 session=cnx.session()
 
 
-my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
-#st.dataframe(data=my_dataframe, use_container_width=True)
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'),col('SEARCH_ON'))
+st.dataframe(data=my_dataframe, use_container_width=True)
+st.stop()
 
 ingredient_list = st.multiselect('Choose upto 5 ingrdients:',my_dataframe, max_selections=5)
 
@@ -42,7 +44,7 @@ if ingredient_list:
         st.success('Your Smoothie is ordered!', icon="✅")
 
 
-import requests
+
 smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
 ##st.text(smoothiefroot_response.json())
 sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
